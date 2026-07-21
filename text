@@ -1,0 +1,63 @@
+| Coluna                           | Descrição                                 |
+| -------------------------------- | ----------------------------------------- |
+| `id`                             | ID do anúncio                             |
+| `name`                           | Nome do imóvel                            |
+| `host_id`                        | ID do anfitrião                           |
+| `host_name`                      | Nome do anfitrião                         |
+| `neighbourhood_group`            | Bairro principal (Manhattan, Brooklyn...) |
+| `neighbourhood`                  | Bairro específico                         |
+| `latitude` / `longitude`         | Localização                               |
+| `room_type`                      | Tipo de acomodação                        |
+| `price`                          | Preço por noite                           |
+| `minimum_nights`                 | Mínimo de noites                          |
+| `number_of_reviews`              | Quantidade de avaliações                  |
+| `last_review`                    | Última avaliação                          |
+| `reviews_per_month`              | Média de avaliações                       |
+| `calculated_host_listings_count` | Quantidade de imóveis do anfitrião        |
+| `availability_365`               | Dias disponíveis no ano                   |
+
+
+Explicando o main.py
+
+logging e traceback: Usados para monitorar o status da execução e, caso dê algum erro, 
+exibir exatamente em qual linha e arquivo o problema aconteceu.
+
+
+Path e load_dotenv: Servem para localizar o arquivo .env (onde ficam senhas e chaves) e carregar 
+essas variáveis para a memória antes de rodar o código.
+
+*
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+env_path = Path(__file__).resolve().parent.parent / "config" / ".env"
+load_dotenv(env_path)
+
+table_name = "ny_airbnb_2019"
+*
+
+logging.basicConfig: Define como os logs de texto aparecerão no seu terminal 
+(mostrando data, hora e o tipo de mensagem)
+
+load_dotenv(env_path): Carregamos o .env logo no início para garantir que o banco PostgreSQL consiga 
+se conectar quando a etapa de Carga for chamada.  
+
+table_name: Definimos o nome da tabela no PostgreSQL em uma variável para facilitar o envio na Carga.
+
+Com os dados completamente limpos e armazenados na variável df_transformed, o main.py chama a função load_airbnb_data.  
+Ela abre a conexão via SQLAlchemy com o seu PostgreSQL e insere os dados na tabela de destino (ny_airbnb_2019). 
+
+*
+except Exception as e:
+    logging.error(f"❌ ERRO no Pipeline: {e}")
+    traceback.print_exc()
+*
+
+Caso algo dê errado (ex: falta de conexão com a internet no Kaggle, erro na senha do banco de dados, ou coluna não encontrada no arquivo), 
+o código cai aqui.  Em vez de fechar o programa silenciosamente, ele exibe uma mensagem vermelha de erro informando exatamente em qual linha a falha aconteceu.
+
+if __name__ == "__main__":
+    pipeline()
+Esta linha diz ao Python que o main.py é o script principal. 
+Quando você executa python main.py no terminal, o arquivo chama automaticamente a função pipeline() para rodar todo o fluxo.
