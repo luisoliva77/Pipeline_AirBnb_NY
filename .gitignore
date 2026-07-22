@@ -44,7 +44,7 @@ credentials.json
 *.log
 logs/
 
-Dados temporários ou sensíveis
+# Dados temporários ou sensíveis
 data/temp/
 data/*.csv
 data/*.xlsx
